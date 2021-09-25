@@ -1,0 +1,6 @@
+jlogger:
+  application: "security-api"
+  version: "1.0.0-SNAPSHOT"
+authentication:
+  host: "dev-70231201.okta.com"
+  token: "SSWS 00h5BDUom5b-KngNz5O8Ou3noB_cxGXzZYFxvONr7a"

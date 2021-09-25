@@ -1,0 +1,27 @@
+%dw 2.0
+
+type auto_6a3119be_67b7_4bad_a119_572043089518_Output_Attributes = {|
+  clientCertificate?: {|
+    publicKey?: {|  |}, 
+    "type"?: String, 
+    encoded?: Binary
+  |}, 
+  headers: {| Authorization: String |}, 
+  listenerPath: String, 
+  method: String, 
+  queryParams: {|
+    sendEmail?: Boolean, 
+    body: String, 
+    "application/json": String
+  |}, 
+  queryString: String, 
+  relativePath: String, 
+  remoteAddress: String, 
+  requestPath: String, 
+  requestUri: String, 
+  scheme: String, 
+  uriParams: {| ID: String |}, 
+  version: String, 
+  localAddress: String
+|}
+

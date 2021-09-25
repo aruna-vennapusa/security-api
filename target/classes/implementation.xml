@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<json-logger:config name="JSON_Logger_Config" doc:name="JSON Logger Config" doc:id="294be65f-8808-45aa-b0d4-ff48aff7069a" environment="SANDBOX" applicationName="${jlogger.application}" applicationVersion="${jlogger.version}"/>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="83a9f759-7a57-4483-b21d-1bbe305dbeef" >
+		<http:request-connection protocol="HTTPS" host="${authentication.host}" />
+	</http:request-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="9b6fc159-cdd9-4b17-88c6-60c5478b1af6" file="config.yaml" />
+	<flow name="createCustomer" doc:id="2720b4a6-63bf-4e2a-8752-800b1ab6136d" >
+		<json-logger:logger doc:name="Logger" doc:id="0b689e38-6342-4d71-bb1d-db609c8cf4fb" config-ref="JSON_Logger_Config" message='"json logger"'/>
+		<ee:transform doc:name="Transform Message" doc:id="67163940-030e-47e0-88f9-096798137640" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "profile": {
+    "firstName": payload.firstName,
+    "lastName": payload.lastName,
+    "email": payload.email,
+    "login": payload.login
+  },
+  "credentials": {
+    "password" :  {
+    	"value": payload.password
+    }
+  }
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="POST" doc:name="customer registration" doc:id="ea008770-aaf0-4f97-9eee-1a7a0cf5c9d5" config-ref="HTTP_Request_configuration" path="/api/v1/users">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"Authorization" : p('authentication.token')
+}]]]></http:headers>
+				<http:query-params><![CDATA[#[output application/json
+---
+{
+	"activate" : "true"
+}]]]></http:query-params>
+		</http:request>
+		<json-logger:logger doc:name="Logger" doc:id="af2d3d2e-9984-4b69-a6fe-94608b2fbebb" config-ref="JSON_Logger_Config" message='"json logger"'/>
+	</flow>
+	<flow name="deactivateCustomer" doc:id="1fdde11e-62fd-4dc7-924c-2a146b4c6fab" >
+		<json-logger:logger doc:name="Logger" doc:id="2f1a7368-70d6-4397-9a49-6fd0fd7ab5b7" config-ref="JSON_Logger_Config" message='"json logger"'/>
+		<http:request method="POST" doc:name="Request" doc:id="9519efba-7e28-41d7-a34c-867de2de73dd" config-ref="HTTP_Request_configuration" path="#[&quot;/api/v1/users/&quot;++ attributes.uriParams.'ID' ++&quot;/lifecycle/deactivate&quot;]">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : p('authentication.token')
+}]]]></http:headers>
+		</http:request>
+		<json-logger:logger doc:name="Logger" doc:id="988863e1-d92f-4a89-b51b-e789fc98a4b3" config-ref="JSON_Logger_Config" message='"json logger"'/>
+	</flow>
+	<flow name="resetPassword" doc:id="6a3119be-67b7-4bad-a119-572043089518" >
+		<json-logger:logger doc:name="Logger" doc:id="aa8a85cc-1000-450b-ac58-3bac5e9ca080" config-ref="JSON_Logger_Config" message='"json logger"'/>
+		<http:request method="POST" doc:name="reset password request" doc:id="e8765000-2517-4a2f-b157-ad5a618a56a4" config-ref="HTTP_Request_configuration" path="#[&quot;/api/v1/users/&quot;++ attributes.uriParams.'ID'++&quot;/lifecycle/reset_password&quot;]" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"Authorization" : p('authentication.token')
+}]]]></http:headers>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"sendEmail" : false
+}]]]></http:query-params>
+		</http:request>
+		<json-logger:logger doc:name="Logger" doc:id="a894d0fc-9bfd-45fb-b05b-fee2d84cdf5f" config-ref="JSON_Logger_Config" message='"json logger"'/>
+	</flow>
+	<flow name="authenticate" doc:id="070092e3-7750-4a0a-9a64-f2683628dba4" >
+		<json-logger:logger doc:name="Logger" doc:id="332d2c9a-3403-4ee6-a9eb-bf89dafd6467" config-ref="JSON_Logger_Config" message='"json logger"' />
+		<http:request method="POST" doc:name="authenticate request" doc:id="76633e28-d93f-48d1-a2a1-dc76a98bfaac" config-ref="HTTP_Request_configuration" path="/api/v1/authn" >
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"sendEmail" : false
+}]]]></http:query-params>
+		</http:request>
+		<json-logger:logger doc:name="Logger" doc:id="e4220790-1740-486f-af30-c284e60a84f6" config-ref="JSON_Logger_Config" message='"json logger"' />
+	</flow>
+	<flow name="forgotPassword" doc:id="2a78f28c-ff10-460d-8e87-a2d83e8c64ab" >
+		<json-logger:logger doc:name="Logger" doc:id="195045a4-32b3-4d29-9c79-792c06b94376" config-ref="JSON_Logger_Config" message='"json logger"' />
+		<http:request method="POST" doc:name="forgot password request" doc:id="4c8a8876-3000-4b75-a0db-8ad81309e857" config-ref="HTTP_Request_configuration" path="#[&quot;/api/v1/users/&quot;++ attributes.uriParams.'ID' ++&quot;/credentials/forgot_password&quot;]" >
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"sendEmail" : false
+}]]]></http:query-params>
+		</http:request>
+		<json-logger:logger doc:name="Logger" doc:id="b2a13299-892e-40bb-9f3d-c7567411de51" config-ref="JSON_Logger_Config" message='"json logger"' />
+	</flow>
+
+</mule>
