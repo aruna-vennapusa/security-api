@@ -45,6 +45,7 @@ output application/json
 	"activate" : "true"
 }]]]></http:query-params>
 		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="d5b3b9fe-51f4-4779-a1ba-22583c0acf7c" message="Hello"/>
 		<json-logger:logger doc:name="Logger" doc:id="af2d3d2e-9984-4b69-a6fe-94608b2fbebb" config-ref="JSON_Logger_Config" message='"json logger"'/>
 	</flow>
 	<flow name="deactivateCustomer" doc:id="1fdde11e-62fd-4dc7-924c-2a146b4c6fab" >

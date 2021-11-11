@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.mycompany</groupId>
@@ -39,10 +41,11 @@
 				<configuration>
 					<cloudHubDeployment>
 						<uri>https://anypoint.mulesoft.com</uri>
+						<server>Anypoint</server>
 						<muleVersion>4.3.0</muleVersion>
-						<username>arunaprasad</username>
-						<password>6naAruna</password>
-						<applicationName>security-api-demo</applicationName>
+						<username>${anypoint.username}</username>
+						<password>${anypoint.password}</password>
+						<applicationName>${app.name}</applicationName>
 						<environment>Sandbox</environment>
 						<workerType>MICRO</workerType>
 						<objectStoreV2>true</objectStoreV2>
@@ -154,6 +157,16 @@
 			<url>https://repository.mulesoft.org/releases/</url>
 			<layout>default</layout>
 		</repository>
+		<repository>
+			<id>arunaprasadb</id>
+			<url>https://pkgs.dev.azure.com/arunaprasadb/_packaging/arunaprasadb/maven/v1</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
 
 	<pluginRepositories>
@@ -167,5 +180,11 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
+	<distributionManagement>
+      <repository>
+         <id>arunaprasadb</id>
+         <url>https://pkgs.dev.azure.com/arunaprasadb/_packaging/arunaprasadb/maven/v1</url>
+      </repository>
+</distributionManagement>
 
 </project>
