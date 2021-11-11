@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
-    <http:listener-config name="security-api-httpListenerConfig">
-        <http:listener-connection host="0.0.0.0" port="8081" />
+<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
+    <http:listener-config name="security-api-2-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8082" />
     </http:listener-config>
-    <apikit:config name="security-api-config" api="resource::bccd1f43-71ae-449a-8d85-8c309490a1aa:security-api:1.0.2:raml:zip:security-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-    <flow name="security-api-main">
-        <http:listener config-ref="security-api-httpListenerConfig" path="/api/*">
+    <apikit:config name="security-api-2-config" api="resource::1dd7a0ff-3874-4f92-9441-67455a5a1288:security-system-api:1.0.0:raml:zip:security-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <flow name="security-api-2-main">
+        <http:listener config-ref="security-api-2-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
@@ -14,7 +14,7 @@
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:router config-ref="security-api-config" />
+        <apikit:router config-ref="security-api-2-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST">
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
@@ -96,8 +96,8 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="security-api-console">
-        <http:listener config-ref="security-api-httpListenerConfig" path="/console/*">
+    <flow name="security-api-2-console">
+        <http:listener config-ref="security-api-2-httpListenerConfig" path="/console/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
@@ -106,7 +106,7 @@ output application/json
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:console config-ref="security-api-config" />
+        <apikit:console config-ref="security-api-2-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:NOT_FOUND">
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
@@ -123,7 +123,7 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="patch:\user\(ID):application\json:security-api-config">
+    <flow name="patch:\user\(ID):application\json:security-api-2-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
             <ee:variables>
                 <ee:set-variable variableName="ID">attributes.uriParams.'ID'</ee:set-variable>
@@ -140,7 +140,7 @@ output application/json
             </ee:message>
         </ee:transform>
     </flow>
-    <flow name="post:\user\authenticate:application\json:security-api-config">
+    <flow name="post:\user\authenticate:application\json:security-api-2-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
@@ -152,8 +152,8 @@ output application/json
             </ee:message>
         </ee:transform>
     </flow>
-    <flow name="post:\user\forgetPassword:application\json:security-api-config">
-        <flow-ref doc:name="Flow Reference" doc:id="7c7cc20a-f749-4853-a802-5973e171e560" name="forgotPassword"/>
+    <flow name="post:\user\forgetPassword:application\json:security-api-2-config">
+        <flow-ref doc:name="Flow Reference" doc:id="b9d0a958-d435-456d-b80b-fded2b100eb5" name="forgotPassword"/>
 		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
@@ -165,9 +165,9 @@ output application/json
             </ee:message>
         </ee:transform>
     </flow>
-    <flow name="post:\user\registration:application\json:security-api-config">
-        <flow-ref doc:name="Flow Reference" doc:id="3062c687-c91c-48c9-a987-7d668f4d12b1" name="createCustomer" />
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <flow name="post:\user\registration:application\json:security-api-2-config">
+        <flow-ref doc:name="Flow Reference" doc:id="e81cc3d0-4b6e-4368-bb48-3fffbaa2f2e3" name="createCustomer"/>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -178,40 +178,23 @@ output application/json
             </ee:message>
         </ee:transform>
     </flow>
-    <flow name="post:\user\(ID)\resetPassword:security-api-config">
-        <flow-ref doc:name="Flow Reference" doc:id="e6502380-f6f7-4283-830a-e87f02666913" name="resetPassword" />
+    <flow name="post:\user\(ID)\resetPassword:security-api-2-config">
+		<flow-ref doc:name="Flow Reference" doc:id="66b51b68-cba5-4b8c-aea9-71157a8fa4bb" name="resetPassword"/>
     </flow>
-    <flow name="post:\user\(ID):security-api-config">
+    <flow name="post:\user\(ID):security-api-2-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
             <ee:variables>
                 <ee:set-variable variableName="ID">attributes.uriParams.'ID'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <flow-ref doc:name="Flow Reference" doc:id="9367fc86-27b5-45a7-b75f-59589d1a2332" name="deactivateCustomer" />
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+        <flow-ref doc:name="Flow Reference" doc:id="e858b3f4-8e4b-4d06-94a6-fcfba3c40969" name="deactivateCustomer"/>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
   message: "Customer deactivated successfully"
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-    </flow>
-    <flow name="post:\user\(ID)\forgetPassword:security-api-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
-            <ee:variables>
-                <ee:set-variable variableName="ID">attributes.uriParams.'ID'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  message: "Password reset link sent successfully"
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>

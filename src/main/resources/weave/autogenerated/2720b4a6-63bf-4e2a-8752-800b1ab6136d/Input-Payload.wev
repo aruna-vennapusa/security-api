@@ -1,0 +1,16 @@
+%dw 2.0
+
+type auto_2720b4a6_63bf_4e2a_8752_800b1ab6136d_Input_Payload = {
+  firstName: String, 
+  lastName: String, 
+  lastUpdated?: String, 
+  password: String, 
+  mobilePhone: String, 
+  created?: String, 
+  id?: String, 
+  login: String, 
+  email: String, 
+  status?: String, 
+  _?: Any
+} {"description": "DataType of Okta register output"}
+
